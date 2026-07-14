@@ -1,0 +1,329 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum TaskPriority {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum TaskStatus {
+  TODO
+  IN_PROGRESS
+  REVIEW
+  DONE
+}
+
+enum JobApplicationStatus {
+  APPLIED
+  SHORTLISTED
+  INTERVIEW
+  SELECTED
+  REJECTED
+}
+
+enum LeaveApprovalStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum LeaveRequestStatus {
+  OPEN
+  CANCELLED
+  CLOSED
+}
+
+model User {
+  id         Int      @id @default(autoincrement())
+  username   String   @unique
+  fullName   String   @map("full_name")
+  email      String   @unique
+  password   String
+  mobile     String
+
+  roleId     Int      @map("role_id")
+  role        Role     @relation(fields: [roleId], references: [id])
+
+  employee    Employee?
+
+  departments DepartmentUser[]
+
+  managedProjects Project[] @relation("ProjectManager")
+  leadProjects    Project[] @relation("ProjectLead")
+
+  projectTeams ProjectTeam[]
+
+  assignedTasks Task[] @relation("AssignedTasks")
+  createdTasks  Task[] @relation("CreatedTasks")
+
+  salaries Salary[]
+  payrolls Payroll[]
+
+  leaves LeaveManagement[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("users")
+}
+
+model Employee {
+  id Int @id @default(autoincrement())
+
+  experience Int
+
+  resumeLink String? @map("resume_link")
+  linkedinUrl String? @map("linkedin_url")
+  address String?
+
+  accountNumber String? @map("account_number")
+  ifscCode String? @map("ifsc_code")
+  bankName String? @map("bank_name")
+  branch String?
+
+  leaveCount Int @default(0) @map("leave_count")
+
+  userId Int @unique @map("user_id")
+  user User @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("employee")
+}
+
+model Role {
+  id Int @id @default(autoincrement())
+
+  rolename String @unique
+  rolecode Int @unique
+
+  users User[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("roles")
+}
+
+model Department {
+  id Int @id @default(autoincrement())
+
+  departmentName String @unique @map("department_name")
+  departmentCode Int @unique @map("department_code")
+  departmentUrl String? @map("department_url")
+
+  users DepartmentUser[]
+  projects Project[]
+  jobs Job[]
+  leaves LeaveManagement[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("departments")
+}
+
+model DepartmentUser {
+  id Int @id @default(autoincrement())
+
+  userId Int @map("user_id")
+  departmentId Int @map("department_id")
+
+  user User @relation(fields: [userId], references: [id])
+  department Department @relation(fields: [departmentId], references: [id])
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@unique([userId, departmentId])
+  @@map("department_users")
+}
+
+model Project {
+  id Int @id @default(autoincrement())
+
+  name String
+  description String?
+
+  startDate DateTime? @map("start_date")
+  endDate DateTime? @map("end_date")
+
+  cost Decimal? @db.Decimal(10,2)
+  status String?
+
+  managerId Int @map("manager_id")
+  teamLeadId Int @map("team_lead_id")
+  departmentId Int @map("department_id")
+
+  manager User @relation("ProjectManager", fields: [managerId], references: [id])
+  teamLead User @relation("ProjectLead", fields: [teamLeadId], references: [id])
+  department Department @relation(fields: [departmentId], references: [id])
+
+  tasks Task[]
+  members ProjectTeam[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("projects")
+}
+
+model ProjectTeam {
+  id Int @id @default(autoincrement())
+
+  projectId Int @map("project_id")
+  userId Int @map("user_id")
+
+  project Project @relation(fields: [projectId], references: [id])
+  user User @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@unique([projectId, userId])
+  @@map("project_team")
+}
+
+model Task {
+  id Int @id @default(autoincrement())
+
+  taskName String @map("task_name")
+  taskDescription String? @map("task_description")
+
+  storyPoint Int? @map("story_point")
+
+  priority TaskPriority
+  status TaskStatus
+
+  duration Int?
+
+  projectId Int @map("project_id")
+  assignedTo Int @map("assigned_to")
+  createdBy Int @map("created_by")
+
+  project Project @relation(fields: [projectId], references: [id])
+
+  assignedUser User @relation("AssignedTasks", fields: [assignedTo], references: [id])
+  createdUser User @relation("CreatedTasks", fields: [createdBy], references: [id])
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("tasks")
+}
+
+model Job {
+  id Int @id @default(autoincrement())
+
+  jobTitle String @map("job_title")
+  jobDescription String? @map("job_description")
+
+  departmentId Int? @map("department_id")
+  department Department? @relation(fields: [departmentId], references: [id])
+
+  applications JobApplication[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("jobs")
+}
+
+model JobApplication {
+  id Int @id @default(autoincrement())
+
+  jobId Int @map("job_id")
+
+  name String
+  email String
+  phone String
+  address String?
+
+  experience Int?
+  skills String?
+
+  currentCompany String? @map("current_company")
+  noticePeriod Int? @map("notice_period")
+
+  ctc Decimal? @db.Decimal(10,2)
+  expectedCtc Decimal? @db.Decimal(10,2) @map("expected_ctc")
+
+  resumeLink String? @map("resume_link")
+  linkedinUrl String? @map("linkedin_url")
+
+  status JobApplicationStatus
+
+  job Job @relation(fields: [jobId], references: [id])
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("job_application")
+}
+
+model Salary {
+  id Int @id @default(autoincrement())
+
+  amount Decimal @db.Decimal(10,2)
+
+  userId Int @map("user_id")
+  user User @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("salary")
+}
+
+model Payroll {
+  id Int @id @default(autoincrement())
+
+  amount Decimal @db.Decimal(10,2)
+
+  userId Int @map("user_id")
+  user User @relation(fields: [userId], references: [id])
+
+  bankReceipt String? @map("bank_receipt")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("payroll")
+}
+
+model LeaveManagement {
+  id Int @id @default(autoincrement())
+
+  userId Int @map("user_id")
+  departmentId Int @map("department_id")
+
+  approveStatus LeaveApprovalStatus @map("approve_status")
+
+  fromDate DateTime? @db.Date @map("from_date")
+  toDate DateTime? @db.Date @map("to_date")
+
+  purpose String?
+
+  requestStatus LeaveRequestStatus @map("request_status")
+
+  user User @relation(fields: [userId], references: [id])
+  department Department @relation(fields: [departmentId], references: [id])
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("leave_management")
+}
