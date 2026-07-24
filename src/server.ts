@@ -5,6 +5,8 @@ import helmet from "helmet";
 import morgan from "morgan";
 import {connectDB,disconnectDB} from "./config/db.js"
 import { errorhandler } from "./core/errors.js";
+import departmentRoutes from "./features/department/department.route.js";
+import employeeRoutes from "./features/employee/employee.route.js";
 dotenv.config();
 connectDB();
 const app = express();
@@ -18,6 +20,9 @@ app.use(express.urlencoded({ extended: true }));
 app.get("/", (req, res) => {
     res.send("Hello World!");
 });
+
+app.use("/departments", departmentRoutes);
+app.use("/employees", employeeRoutes);
 
 app.use(errorhandler)
 

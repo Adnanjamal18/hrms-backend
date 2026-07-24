@@ -57,6 +57,7 @@ model User {
   role        Role     @relation(fields: [roleId], references: [id])
 
   employee    Employee?
+  managedDepartments Department[] @relation("DepartmentManager")
 
   departments DepartmentUser[]
 
@@ -124,6 +125,8 @@ model Department {
   departmentName String @unique @map("department_name")
   departmentCode Int @unique @map("department_code")
   departmentUrl String? @map("department_url")
+  managerId Int
+  manager User @relation("DepartmentManager" , fields:[managerId] , references:[id])
 
   users DepartmentUser[]
   projects Project[]
@@ -141,6 +144,7 @@ model DepartmentUser {
 
   userId Int @map("user_id")
   departmentId Int @map("department_id")
+
 
   user User @relation(fields: [userId], references: [id])
   department Department @relation(fields: [departmentId], references: [id])

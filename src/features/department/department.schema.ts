@@ -5,3 +5,9 @@ export const createDepartmentSchema = z.object({
     departmentCode: z.number(),
     departmentUrl: z.string().optional()
 })
+
+export const updateDepartmentSchema = z.object({
+    departmentName: z.string().optional(),
+    departmentCode: z.number().optional(),
+    departmentUrl: z.string().optional()
+})
