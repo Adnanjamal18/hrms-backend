@@ -178,8 +178,8 @@ model Department {
   departmentName String @unique @map("department_name")
   departmentCode Int @unique @map("department_code")
   departmentUrl String? @map("department_url")
-  managerId String
-  manager User @relation("DepartmentManager" , fields:[managerId] , references:[id])
+  managerId String? @map("manager_id")
+  manager User? @relation("DepartmentManager" , fields:[managerId] , references:[id])
 
   users    DepartmentUser[]
   projects Project[]
@@ -198,8 +198,8 @@ model DepartmentUser {
   userId       String @map("user_id")
   departmentId Int    @map("department_id")
 
-  user User @relation(fields: [userId], references: [id])
-  department Department @relation(fields: [departmentId], references: [id])
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  department Department @relation(fields: [departmentId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")

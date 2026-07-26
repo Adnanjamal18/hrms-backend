@@ -1,7 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 
 export class DepartmentRepositary {
-  constructor(private readonly prisma: PrismaClient) {}
+  constructor(private readonly prisma: PrismaClient) { }
   async createDepartment(data: any) {
     try {
       return await this.prisma.department.create({
