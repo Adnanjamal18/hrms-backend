@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { validate } from "../../middleware/validateRequest.js";
+import { validateRequest } from "../../middleware/validateRequest.js";
 import {
   createDepartmentSchema,
   updateDepartmentSchema,
@@ -17,13 +17,13 @@ const controller = new DepartmentController(service);
 
 router.post(
   "/createDepartment",
-  validate(createDepartmentSchema),
+  validateRequest(createDepartmentSchema),
   controller.createDepartment,
 );
 
 router.put(
   "/updateDepartment/:id",
-  validate(updateDepartmentSchema),
+  validateRequest(updateDepartmentSchema),
   controller.updateDepartment,
 );
 

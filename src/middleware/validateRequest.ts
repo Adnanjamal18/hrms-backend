@@ -1,15 +1,15 @@
 import type { Request, Response, NextFunction } from "express";
 import { z, ZodError } from "zod";
-import logger from "../utils/logger.js";
+import { logger } from "../utils/logger.js";
 
 // This chunk of code is a "higher-order function" - a function that returns a middleware function.
 // We pass a z.ZodTypeAny to it, and it gives us back a middleware ready to validate requests against that schema.
-export const validate = (schema: z.ZodTypeAny) => {
+export const validateRequest = (schema: z.ZodTypeAny) => {
   return (req: Request, res: Response, next: NextFunction): void => {
     try {
       // schema.parse() checks if req.body matches the structure we defined in our Zod schema.
       // If it doesn't match, it throws a ZodError, which is caught by the catch block.
-      schema.parse(req.body);
+    req.body = schema.parse(req.body);
       
       // If parsing succeeds, the data is valid, so we call next() to proceed to the controller.
       next();
