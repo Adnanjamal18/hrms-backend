@@ -6,17 +6,7 @@ export class EmployeeRepository {
   async createEmployee(data: any) {
     try {
       const { username, fullName, email, password, mobile, roleId } = data;
-      const {
-        experience,
-        resumeLink,
-        linkedinUrl,
-        address,
-        accountNumber,
-        ifscCode,
-        bankName,
-        branch,
-      } = data;
-      const users = await this.prisma.user.create({
+      const user = await this.prisma.user.create({
         data: {
           username,
           fullName,
@@ -26,33 +16,19 @@ export class EmployeeRepository {
           roleId,
         },
       });
-      const employee = await this.prisma.employee.create({
-        data: {
-          experience,
-          resumeLink,
-          linkedinUrl,
-          address,
-          accountNumber,
-          ifscCode,
-          bankName,
-          branch,
-          userId: users.id,
-        },
-      });
       return {
-        user: users,
-        employee: employee,
+        user,
       };
     } catch (error) {
       throw error;
     }
   }
 
-  async updateEmployee(userId: number, data: any) {
+  async updateEmployee(userId: string, data: any) {
     try {
-      const updated = await this.prisma.employee.update({
+      const updated = await this.prisma.user.update({
         where: {
-          userId,
+          id: userId,
         },
         data,
       });
@@ -62,11 +38,11 @@ export class EmployeeRepository {
     }
   }
 
-  async deleteEmployee(userId: number) {
+  async deleteEmployee(userId: string) {
     try {
-      const deleted = await this.prisma.employee.delete({
+      const deleted = await this.prisma.user.delete({
         where: {
-          userId,
+          id: userId,
         },
       });
       return deleted;
@@ -75,27 +51,17 @@ export class EmployeeRepository {
     }
   }
 
-  async getEmployeeById(userId: number) {
+  async getEmployeeById(userId: string) {
     try {
-      const find = await this.prisma.employee.findUnique({
+      const find = await this.prisma.user.findUnique({
         where: {
-          userId,
+          id: userId,
         },
         include: {
-          user: {
-            select: {
-              id: true,
-              username: true,
-              fullName: true,
-              email: true,
-              mobile: true,
-              roleId: true,
-              role: true,
-              departments: {
-                include: {
-                  department: true,
-                },
-              },
+          role: true,
+          departments: {
+            include: {
+              department: true,
             },
           },
         },
@@ -108,22 +74,12 @@ export class EmployeeRepository {
 
   async getAllEmployees() {
     try {
-      const findAll = await this.prisma.employee.findMany({
+      const findAll = await this.prisma.user.findMany({
         include: {
-          user: {
-            select: {
-              id: true,
-              username: true,
-              fullName: true,
-              email: true,
-              mobile: true,
-              roleId: true,
-              role: true,
-              departments: {
-                include: {
-                  department: true,
-                },
-              },
+          role: true,
+          departments: {
+            include: {
+              department: true,
             },
           },
         },
@@ -137,7 +93,7 @@ export class EmployeeRepository {
     }
   }
 
-  async assignDepartment(userId: number, departmentId: number) {
+  async assignDepartment(userId: string, departmentId: number) {
     try {
       const existing = await this.prisma.departmentUser.findFirst({
         where: {

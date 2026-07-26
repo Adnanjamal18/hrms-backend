@@ -11,14 +11,13 @@ export class EmployeeService {
   async createEmployee(data: any) {
     try {
       const employee = await this.repository.createEmployee(data);
-
       return employee;
     } catch (error) {
       throw error;
     }
   }
 
-  async updateEmployee(id: number, data: any) {
+  async updateEmployee(id: string, data: any) {
     try {
       const updated = await this.repository.updateEmployee(id, data);
       return updated;
@@ -27,7 +26,7 @@ export class EmployeeService {
     }
   }
 
-  async deleteEmployee(id: number) {
+  async deleteEmployee(id: string) {
     try {
       const deleted = await this.repository.deleteEmployee(id);
       return deleted;
@@ -36,7 +35,7 @@ export class EmployeeService {
     }
   }
 
-  async getEmployeeById(id: number) {
+  async getEmployeeById(id: string) {
     try {
       const find = await this.repository.getEmployeeById(id);
       return find;
@@ -44,6 +43,7 @@ export class EmployeeService {
       throw error;
     }
   }
+
   async getAllEmployees() {
     try {
       const findAll = await this.repository.getAllEmployees();
@@ -53,7 +53,7 @@ export class EmployeeService {
     }
   }
 
-  async assignDepartment(userId: number, departmentId: number) {
+  async assignDepartment(userId: string, departmentId: number) {
     try {
       const create = await this.repository.assignDepartment(
         userId,
@@ -81,11 +81,10 @@ export class EmployeeService {
     return {
       uploadUrl,
       key
-    }
+    };
   }
 
-  async getDocumentUrl(employeeId){
+  async getDocumentUrl(employeeId: string) {
 
   }
-
 }

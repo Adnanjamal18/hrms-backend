@@ -44,9 +44,10 @@ export class EmployeeController {
       next(error);
     }
   };
+
   updateEmployee = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const userId = Number(req.params.userId);
+      const userId = req.params.userId as string;
 
       const {
         experience,
@@ -59,7 +60,7 @@ export class EmployeeController {
         branch,
       } = req.body;
 
-      const updated = await this.service.updateEmployee(Number(userId), {
+      const updated = await this.service.updateEmployee(userId, {
         experience,
         resumeLink,
         linkedinUrl,
@@ -78,8 +79,8 @@ export class EmployeeController {
 
   deleteEmployee = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const userId = Number(req.params.userId);
-      const deleted = await this.service.deleteEmployee(Number(userId));
+      const userId = req.params.userId as string;
+      const deleted = await this.service.deleteEmployee(userId);
       res.status(200).json(deleted);
     } catch (error) {
       next(error);
@@ -88,8 +89,8 @@ export class EmployeeController {
 
   getEmployeeById = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const userId = Number(req.params.userId);
-      const find = await this.service.getEmployeeById(Number(userId));
+      const userId = req.params.userId as string;
+      const find = await this.service.getEmployeeById(userId);
       res.status(200).json(find);
     } catch (error) {
       next(error);
@@ -107,12 +108,12 @@ export class EmployeeController {
 
   assignEmployees = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const userId = Number(req.params.userId);
+      const userId = req.params.userId as string;
       const { departmentId } = req.body;
 
       const assigned = await this.service.assignDepartment(
         userId,
-        departmentId,
+        Number(departmentId),
       );
 
       res.status(200).json(assigned);
@@ -126,17 +127,25 @@ export class EmployeeController {
     res: Response,
     next: NextFunction,
   ) => {
-    const { fileName, contentType } = req.body;
-    const signedUrl = await this.service.generateSignedUrl(
-      fileName,
-      contentType,
-    );
-    res.json(signedUrl);
+    try {
+      const { fileName, contentType } = req.body;
+      const signedUrl = await this.service.generateSignedUrl(
+        fileName,
+        contentType,
+      );
+      res.json(signedUrl);
+    } catch (error) {
+      next(error);
+    }
   };
 
   getDocumentUrl = async (req: Request, res: Response, next: NextFunction) => {
-    const { employeeId } = req.params;
-    const getUrl = await this.service.getDocumentUrl(Number(employeeId));
-    res.json(getUrl);
+    try {
+      const employeeId = req.params.employeeId as string;
+      const getUrl = await this.service.getDocumentUrl(employeeId);
+      res.json(getUrl);
+    } catch (error) {
+      next(error);
+    }
   };
 }

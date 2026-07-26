@@ -35,3 +35,6 @@ export const validateRequest = (schema: z.ZodTypeAny) => {
     }
   };
 };
+
+export const validate = validateRequest;
+
