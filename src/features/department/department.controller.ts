@@ -63,7 +63,7 @@ export class DepartmentController {
       const filtering = (req.query.departmentName as string) || "";
       const search = (req.query.search as string) || "";
       const page = Number(req.query.page) || 1;
-      const limit = Number(req.query.limit) || 5;
+      const limit = Number(req.query.limit) || 100;
       const sortBy = (req.query.sortBy as string) || "createdAt";
       const sortOrder = (req.query.sortOrder as string) || "desc";
       const departments = await this.service.getAllDepartments(

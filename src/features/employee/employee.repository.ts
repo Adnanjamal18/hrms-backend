@@ -81,6 +81,24 @@ export class EmployeeRepository {
         where: {
           userId,
         },
+        include: {
+          user: {
+            select: {
+              id: true,
+              username: true,
+              fullName: true,
+              email: true,
+              mobile: true,
+              roleId: true,
+              role: true,
+              departments: {
+                include: {
+                  department: true,
+                },
+              },
+            },
+          },
+        },
       });
       return find;
     } catch (error) {
@@ -90,7 +108,29 @@ export class EmployeeRepository {
 
   async getAllEmployees() {
     try {
-      const findAll = await this.prisma.employee.findMany();
+      const findAll = await this.prisma.employee.findMany({
+        include: {
+          user: {
+            select: {
+              id: true,
+              username: true,
+              fullName: true,
+              email: true,
+              mobile: true,
+              roleId: true,
+              role: true,
+              departments: {
+                include: {
+                  department: true,
+                },
+              },
+            },
+          },
+        },
+        orderBy: {
+          createdAt: "desc",
+        },
+      });
       return findAll;
     } catch (error) {
       throw error;

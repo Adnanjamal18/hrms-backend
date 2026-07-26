@@ -1,4 +1,9 @@
+import { randomUUID } from "node:crypto";
 import type { EmployeeRepository } from "./employee.repository.js";
+import path from "path";
+import { PutObjectCommand } from "@aws-sdk/client-s3";
+import { s3Client } from "../../config/s3.js";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
 export class EmployeeService {
   constructor(private readonly repository: EmployeeRepository) {}
@@ -6,7 +11,7 @@ export class EmployeeService {
   async createEmployee(data: any) {
     try {
       const employee = await this.repository.createEmployee(data);
-      
+
       return employee;
     } catch (error) {
       throw error;
@@ -59,4 +64,28 @@ export class EmployeeService {
       throw error;
     }
   }
+
+  async generateSignedUrl(fileName: string, contentType: string) {
+    const uuid = randomUUID();
+    const extension = path.extname(fileName);
+    const key = `resumes/${uuid}${extension}`;
+    const command = new PutObjectCommand({
+      Bucket: process.env.S3_BUCKET,
+      Key: key,
+      ContentType: contentType
+    });
+    const uploadUrl = await getSignedUrl(s3Client, command, {
+      expiresIn: 300,
+    });
+
+    return {
+      uploadUrl,
+      key
+    }
+  }
+
+  async getDocumentUrl(employeeId){
+
+  }
+
 }

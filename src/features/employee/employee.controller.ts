@@ -120,4 +120,23 @@ export class EmployeeController {
       next(error);
     }
   };
+
+  generateSignedUrl = async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) => {
+    const { fileName, contentType } = req.body;
+    const signedUrl = await this.service.generateSignedUrl(
+      fileName,
+      contentType,
+    );
+    res.json(signedUrl);
+  };
+
+  getDocumentUrl = async (req: Request, res: Response, next: NextFunction) => {
+    const { employeeId } = req.params;
+    const getUrl = await this.service.getDocumentUrl(Number(employeeId));
+    res.json(getUrl);
+  };
 }

@@ -37,3 +37,8 @@ export const updateEmployeeSchema = z.object({
 export const assignDepartmentSchema = z.object({
   departmentId: z.number(),
 });
+
+export const generateSignedUrl = z.object({
+  fileName: z.string(),
+  contentType: z.string(),
+});
