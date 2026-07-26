@@ -1,5 +1,5 @@
 import type { Request, Response, NextFunction ,} from "express";
-import logger from "../utils/logger.js";
+import { logger } from "../utils/logger.js";
 
 // This chunk of code is the Global Error Handler middleware.
 // Notice it has FOUR arguments instead of three: (err, req, res, next).
