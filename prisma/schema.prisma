@@ -46,17 +46,22 @@ enum LeaveRequestStatus {
 }
 
 model User {
-  id         Int      @id @default(autoincrement())
-  username   String   @unique
-  fullName   String   @map("full_name")
-  email      String   @unique
-  password   String
-  mobile     String
+  id       String  @id @default(cuid())
+  username String  @unique
+  fullName String  @map("full_name")
+  email    String  @unique
+  password String?
+  mobile   String
 
-  roleId     Int      @map("role_id")
-  role        Role     @relation(fields: [roleId], references: [id])
+  emailVerified Boolean @default(false)
+  image         String?
 
-  employee    Employee?
+  roleId   Int       @map("role_id")
+  role     Role      @relation(fields: [roleId], references: [id])
+  //refrences is for forign key
+  sessions Session[]
+  accounts Account[]
+
   managedDepartments Department[] @relation("DepartmentManager")
 
   departments DepartmentUser[]
@@ -80,36 +85,84 @@ model User {
   @@map("users")
 }
 
-model Employee {
-  id Int @id @default(autoincrement())
+model Session {
+  id        String   @id @default(uuid())
+  expiresAt DateTime
+  token     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String
+  userAgent String
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  experience Int
-
-  resumeLink String? @map("resume_link")
-  linkedinUrl String? @map("linkedin_url")
-  address String?
-
-  accountNumber String? @map("account_number")
-  ifscCode String? @map("ifsc_code")
-  bankName String? @map("bank_name")
-  branch String?
-
-  leaveCount Int @default(0) @map("leave_count")
-
-  userId Int @unique @map("user_id")
-  user User @relation(fields: [userId], references: [id])
-
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-
-  @@map("employee")
+  @@unique([token])
+  @@map("sessions")
 }
+
+model Account {
+  id                    String    @id @default(uuid())
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@map("accounts")
+}
+
+model Verification {
+  id         String   @id @default(uuid())
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@map("verifications")
+}
+
+model Designation {
+  id String @id @default(uuid())
+  post String 
+  description String 
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @map("updated_at")
+}
+
+model Leavetype {
+  id String @id @default(uuid())
+  type String 
+  description String 
+  leaves LeaveManagement[]
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @map("updated_at")
+
+}
+
+model EmployementType {
+  id String @id @default(uuid())
+  type String 
+  description String 
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @map("updated_at")
+}
+
+
 
 model Role {
   id Int @id @default(autoincrement())
 
   rolename String @unique
-  rolecode Int @unique
+  rolecode Int    @unique
 
   users User[]
 
@@ -125,13 +178,13 @@ model Department {
   departmentName String @unique @map("department_name")
   departmentCode Int @unique @map("department_code")
   departmentUrl String? @map("department_url")
-  managerId Int
+  managerId String
   manager User @relation("DepartmentManager" , fields:[managerId] , references:[id])
 
-  users DepartmentUser[]
+  users    DepartmentUser[]
   projects Project[]
-  jobs Job[]
-  leaves LeaveManagement[]
+  jobs     Job[]
+  leaves   LeaveManagement[]
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -142,9 +195,8 @@ model Department {
 model DepartmentUser {
   id Int @id @default(autoincrement())
 
-  userId Int @map("user_id")
-  departmentId Int @map("department_id")
-
+  userId       String @map("user_id")
+  departmentId Int    @map("department_id")
 
   user User @relation(fields: [userId], references: [id])
   department Department @relation(fields: [departmentId], references: [id])
@@ -159,24 +211,24 @@ model DepartmentUser {
 model Project {
   id Int @id @default(autoincrement())
 
-  name String
+  name        String
   description String?
 
   startDate DateTime? @map("start_date")
-  endDate DateTime? @map("end_date")
+  endDate   DateTime? @map("end_date")
 
-  cost Decimal? @db.Decimal(10,2)
+  cost   Decimal? @db.Decimal(10, 2)
   status String?
 
-  managerId Int @map("manager_id")
-  teamLeadId Int @map("team_lead_id")
-  departmentId Int @map("department_id")
+  managerId    String @map("manager_id")
+  teamLeadId   String @map("team_lead_id")
+  departmentId Int    @map("department_id")
 
-  manager User @relation("ProjectManager", fields: [managerId], references: [id])
-  teamLead User @relation("ProjectLead", fields: [teamLeadId], references: [id])
+  manager    User       @relation("ProjectManager", fields: [managerId], references: [id])
+  teamLead   User       @relation("ProjectLead", fields: [teamLeadId], references: [id])
   department Department @relation(fields: [departmentId], references: [id])
 
-  tasks Task[]
+  tasks   Task[]
   members ProjectTeam[]
 
   createdAt DateTime @default(now()) @map("created_at")
@@ -188,11 +240,11 @@ model Project {
 model ProjectTeam {
   id Int @id @default(autoincrement())
 
-  projectId Int @map("project_id")
-  userId Int @map("user_id")
+  projectId Int    @map("project_id")
+  userId    String @map("user_id")
 
   project Project @relation(fields: [projectId], references: [id])
-  user User @relation(fields: [userId], references: [id])
+  user    User    @relation(fields: [userId], references: [id])
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -204,24 +256,24 @@ model ProjectTeam {
 model Task {
   id Int @id @default(autoincrement())
 
-  taskName String @map("task_name")
+  taskName        String  @map("task_name")
   taskDescription String? @map("task_description")
 
   storyPoint Int? @map("story_point")
 
   priority TaskPriority
-  status TaskStatus
+  status   TaskStatus
 
   duration Int?
 
-  projectId Int @map("project_id")
-  assignedTo Int @map("assigned_to")
-  createdBy Int @map("created_by")
+  projectId  Int    @map("project_id")
+  assignedTo String @map("assigned_to")
+  createdBy  String @map("created_by")
 
   project Project @relation(fields: [projectId], references: [id])
 
   assignedUser User @relation("AssignedTasks", fields: [assignedTo], references: [id])
-  createdUser User @relation("CreatedTasks", fields: [createdBy], references: [id])
+  createdUser  User @relation("CreatedTasks", fields: [createdBy], references: [id])
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -232,11 +284,11 @@ model Task {
 model Job {
   id Int @id @default(autoincrement())
 
-  jobTitle String @map("job_title")
+  jobTitle       String  @map("job_title")
   jobDescription String? @map("job_description")
 
-  departmentId Int? @map("department_id")
-  department Department? @relation(fields: [departmentId], references: [id])
+  departmentId Int?        @map("department_id")
+  department   Department? @relation(fields: [departmentId], references: [id])
 
   applications JobApplication[]
 
@@ -251,21 +303,21 @@ model JobApplication {
 
   jobId Int @map("job_id")
 
-  name String
-  email String
-  phone String
+  name    String
+  email   String
+  phone   String
   address String?
 
   experience Int?
-  skills String?
+  skills     String?
 
   currentCompany String? @map("current_company")
-  noticePeriod Int? @map("notice_period")
+  noticePeriod   Int?    @map("notice_period")
 
-  ctc Decimal? @db.Decimal(10,2)
-  expectedCtc Decimal? @db.Decimal(10,2) @map("expected_ctc")
+  ctc         Decimal? @db.Decimal(10, 2)
+  expectedCtc Decimal? @map("expected_ctc") @db.Decimal(10, 2)
 
-  resumeLink String? @map("resume_link")
+  resumeLink  String? @map("resume_link")
   linkedinUrl String? @map("linkedin_url")
 
   status JobApplicationStatus
@@ -281,10 +333,10 @@ model JobApplication {
 model Salary {
   id Int @id @default(autoincrement())
 
-  amount Decimal @db.Decimal(10,2)
+  amount Decimal @db.Decimal(10, 2)
 
-  userId Int @map("user_id")
-  user User @relation(fields: [userId], references: [id])
+  userId String @map("user_id")
+  user   User   @relation(fields: [userId], references: [id])
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -295,10 +347,10 @@ model Salary {
 model Payroll {
   id Int @id @default(autoincrement())
 
-  amount Decimal @db.Decimal(10,2)
+  amount Decimal @db.Decimal(10, 2)
 
-  userId Int @map("user_id")
-  user User @relation(fields: [userId], references: [id])
+  userId String @map("user_id")
+  user   User   @relation(fields: [userId], references: [id])
 
   bankReceipt String? @map("bank_receipt")
 
@@ -311,19 +363,22 @@ model Payroll {
 model LeaveManagement {
   id Int @id @default(autoincrement())
 
-  userId Int @map("user_id")
-  departmentId Int @map("department_id")
+  userId       String @map("user_id")
+  departmentId Int    @map("department_id")
 
   approveStatus LeaveApprovalStatus @map("approve_status")
 
-  fromDate DateTime? @db.Date @map("from_date")
-  toDate DateTime? @db.Date @map("to_date")
+  fromDate DateTime? @map("from_date") @db.Date
+  toDate   DateTime? @map("to_date") @db.Date
 
   purpose String?
 
   requestStatus LeaveRequestStatus @map("request_status")
 
-  user User @relation(fields: [userId], references: [id])
+  leaveTypeId String?    @map("leave_type_id")
+  leaveType   Leavetype? @relation(fields: [leaveTypeId], references: [id])
+
+  user       User       @relation(fields: [userId], references: [id])
   department Department @relation(fields: [departmentId], references: [id])
 
   createdAt DateTime @default(now()) @map("created_at")

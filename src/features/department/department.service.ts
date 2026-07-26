@@ -48,7 +48,7 @@ export class DepartmentService {
     }
   }
 
-  async assignManager(departmentId: number, managerId: number) {
+  async assignManager(departmentId: number, managerId: string) {
     try {
       const assign = await this.Repositary.assignManager(
         departmentId,

@@ -1,7 +1,7 @@
 
 import winston from "winston";
 
-const logger = winston.createLogger({
+export const logger = winston.createLogger({
     level:"info",
     format:winston.format.combine(
         winston.format.timestamp(),
@@ -13,7 +13,10 @@ const logger = winston.createLogger({
             winston.format.colorize(),
             winston.format.simple()
         )
-     })
+     }),
+     new winston.transports.File({
+        filename: 'server-crashes.log',
+         level: 'error' 
+        }) // Destination 2: A text file!
     ]
 });
-export default logger;

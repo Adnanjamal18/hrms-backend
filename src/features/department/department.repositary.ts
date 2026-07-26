@@ -72,7 +72,7 @@ export class DepartmentRepositary {
     }
   }
 
-  async assignManager(departmentId: number, managerId: number) {
+  async assignManager(departmentId: number, managerId: string) {
     try {
       return await this.prisma.department.update({
         where: {
