@@ -5,7 +5,12 @@ export class EmployeeRepository {
 
   async createEmployee(data: any) {
     try {
-      const { username, fullName, email, password, mobile, roleId } = data;
+      const { 
+        username, fullName, email, password, mobile, roleId, 
+        experience, resumeLink, linkedinUrl, address, 
+        accountNumber, ifscCode, bankName, branch
+      } = data;
+      
       const user = await this.prisma.user.create({
         data: {
           username,
@@ -14,6 +19,18 @@ export class EmployeeRepository {
           password,
           mobile,
           roleId,
+          employee: {
+            create: {
+              experience: experience || 0,
+              resumeLink,
+              linkedinUrl,
+              address,
+              accountNumber,
+              ifscCode,
+              bankName,
+              branch,
+            }
+          }
         },
       });
       return {
@@ -26,11 +43,32 @@ export class EmployeeRepository {
 
   async updateEmployee(userId: string, data: any) {
     try {
+      const { 
+        experience, resumeLink, linkedinUrl, address, 
+        accountNumber, ifscCode, bankName, branch,
+        ...userData 
+      } = data;
+
       const updated = await this.prisma.user.update({
         where: {
           id: userId,
         },
-        data,
+        data: {
+          ...userData,
+          employee: {
+            upsert: {
+              create: {
+                experience: experience || 0,
+                resumeLink, linkedinUrl, address,
+                accountNumber, ifscCode, bankName, branch
+              },
+              update: {
+                experience, resumeLink, linkedinUrl, address,
+                accountNumber, ifscCode, bankName, branch
+              }
+            }
+          }
+        }
       });
       return updated;
     } catch (error) {
@@ -59,6 +97,7 @@ export class EmployeeRepository {
         },
         include: {
           role: true,
+          employee: true,
           departments: {
             include: {
               department: true,
@@ -66,7 +105,19 @@ export class EmployeeRepository {
           },
         },
       });
-      return find;
+      
+      if (!find) return null;
+      
+      // Flatten the employee data onto the user object to maintain API compatibility
+      const { employee, ...userData } = find;
+      
+      // Exclude employee.id to avoid overwriting user.id
+      const { id: employeeId, userId: employeeUserId, ...employeeData } = employee || {};
+      
+      return {
+        ...userData,
+        ...employeeData,
+      };
     } catch (error) {
       throw error;
     }
@@ -77,6 +128,7 @@ export class EmployeeRepository {
       const findAll = await this.prisma.user.findMany({
         include: {
           role: true,
+          employee: true,
           departments: {
             include: {
               department: true,
@@ -87,7 +139,18 @@ export class EmployeeRepository {
           createdAt: "desc",
         },
       });
-      return findAll;
+
+      return findAll.map(user => {
+        const { employee, ...userData } = user;
+        
+        // Exclude employee.id to avoid overwriting user.id
+        const { id: employeeId, userId: employeeUserId, ...employeeData } = employee || {};
+        
+        return {
+          ...userData,
+          ...employeeData,
+        };
+      });
     } catch (error) {
       throw error;
     }
@@ -98,14 +161,23 @@ export class EmployeeRepository {
       const existing = await this.prisma.departmentUser.findFirst({
         where: {
           userId,
-          departmentId,
         },
       });
 
       if (existing) {
-        return existing;
+        if (existing.departmentId === departmentId) {
+          return existing;
+        }
+        
+        // Update their current department
+        const updated = await this.prisma.departmentUser.update({
+          where: { id: existing.id },
+          data: { departmentId },
+        });
+        return updated;
       }
 
+      // Assign them to a department for the first time
       const assigned = await this.prisma.departmentUser.create({
         data: {
           userId,

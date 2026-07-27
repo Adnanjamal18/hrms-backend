@@ -58,6 +58,12 @@ export class EmployeeController {
         ifscCode,
         bankName,
         branch,
+        username,
+        fullName,
+        email,
+        password,
+        mobile,
+        roleId,
       } = req.body;
 
       const updated = await this.service.updateEmployee(userId, {
@@ -69,6 +75,12 @@ export class EmployeeController {
         ifscCode,
         bankName,
         branch,
+        username,
+        fullName,
+        email,
+        password,
+        mobile,
+        roleId,
       });
 
       res.status(200).json(updated);
@@ -128,7 +140,7 @@ export class EmployeeController {
     next: NextFunction,
   ) => {
     try {
-      const { fileName, contentType } = req.body;
+      const { fileName, contentType } = req.body;     
       const signedUrl = await this.service.generateSignedUrl(
         fileName,
         contentType,

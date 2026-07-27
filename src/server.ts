@@ -6,6 +6,7 @@ import morgan from "morgan";
 import {connectDB,disconnectDB} from "./config/db.js"
 import { errorhandler } from "./core/errors.js";
 import departmentRoutes from "./features/department/department.route.js";
+import employeeRoutes from "./features/employee/employee.route.js";
 import { auth } from "./features/auth/auth.js";
 import { toNodeHandler } from "better-auth/node";
 import designationRoutes from "./features/designation/designation.routes.js";
@@ -31,6 +32,7 @@ app.use("/api/employment-types", employmentTypeRoutes);
 app.use("/api/leave-types", leaveTypeRoutes);
 
 app.use("/departments", departmentRoutes);
+app.use("/employees", employeeRoutes);
 
 app.use(errorhandler)
 

@@ -30,7 +30,7 @@ export const updateEmployeeSchema = z.object({
   fullName: z.string().optional(),
   email: z.string().optional(),
   password: z.string().optional(),
-  mobile: z.number().optional(),
+  mobile: z.string().optional(),
   roleId: z.number().optional(),
 });
 

@@ -79,6 +79,8 @@ model User {
 
   leaves LeaveManagement[]
 
+  employee Employee?
+
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
@@ -385,4 +387,28 @@ model LeaveManagement {
   updatedAt DateTime @updatedAt @map("updated_at")
 
   @@map("leave_management")
+}
+
+model Employee {
+  id Int @id @default(autoincrement())
+  
+  experience Int?
+  resumeLink String? @map("resume_link")
+  linkedinUrl String? @map("linkedin_url")
+  address String?
+  
+  accountNumber String? @map("account_number")
+  ifscCode String? @map("ifsc_code")
+  bankName String? @map("bank_name")
+  branch String?
+
+  leaveCount Int @default(0) @map("leave_count")
+
+  userId String @unique @map("user_id")
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("employees")
 }
