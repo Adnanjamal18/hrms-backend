@@ -14,6 +14,18 @@ export const createDesignation = async (req: Request, res: Response, next: NextF
   }
 };
 
+export const getAllDesignations = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    logger.info("Fetching all designations");
+    const designations = await prisma.designation.findMany({
+      orderBy: { createdAt: 'desc' }
+    });
+    res.json(designations);
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const updateDesignation = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const id = req.params.id as string;
@@ -23,6 +35,17 @@ export const updateDesignation = async (req: Request, res: Response, next: NextF
       data: { post: req.body.post, description: req.body.description || "" }
     });
     res.json(updatedDesignation);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const deleteDesignation = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const id = req.params.id as string;
+    logger.info(`Deleting designation ID: ${id}`);
+    await prisma.designation.delete({ where: { id } });
+    res.status(204).send();
   } catch (error) {
     next(error);
   }
