@@ -155,9 +155,13 @@ model Leavetype {
 
 }
 
-
-
-
+model EmployementType {
+  id String @id @default(uuid())
+  type String 
+  description String 
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @map("updated_at")
+}
 
 model Role {
   id Int @id @default(autoincrement())
