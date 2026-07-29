@@ -143,7 +143,6 @@ export class EmployeeRepository {
       return findAll.map(user => {
         const { employee, ...userData } = user;
         
-        // Exclude employee.id to avoid overwriting user.id
         const { id: employeeId, userId: employeeUserId, ...employeeData } = employee || {};
         
         return {
@@ -185,6 +184,34 @@ export class EmployeeRepository {
         },
       });
       return assigned;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async deleteResume(userId: string) {
+    try {
+      const updated = await this.prisma.employee.update({
+        where: {
+          userId: userId,
+        },
+        data: {
+          resumeLink: null,
+        },
+      });
+      return updated;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async verifyUserEmail(userId: string) {
+    try {
+      const updated = await this.prisma.user.update({
+        where: { id: userId },
+        data: { emailVerified: true },
+      });
+      return updated;
     } catch (error) {
       throw error;
     }

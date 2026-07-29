@@ -140,7 +140,7 @@ export class EmployeeController {
     next: NextFunction,
   ) => {
     try {
-      const { fileName, contentType } = req.body;     
+      const { fileName, contentType } = req.body;
       const signedUrl = await this.service.generateSignedUrl(
         fileName,
         contentType,
@@ -153,9 +153,45 @@ export class EmployeeController {
 
   getDocumentUrl = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const employeeId = req.params.employeeId as string;
-      const getUrl = await this.service.getDocumentUrl(employeeId);
+      const userId = (req.params.userId || req.params.employeeId) as string;
+      const getUrl = await this.service.getDocumentUrl(userId);
       res.json(getUrl);
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  deleteDocument = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const userId = (req.params.userId || req.params.employeeId) as string;
+      const result = await this.service.deleteDocument(userId);
+      res.status(200).json({
+        message: "Document deleted successfully",
+        data: result,
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  sendInvitation = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const userId = (req.params.userId || req.params.employeeId) as string;
+      const result = await this.service.sendInvite(userId);
+      res.status(200).json(result);
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  activateAccount = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { token } = req.body;
+      if (!token) {
+        throw new Error("Activation token is required");
+      }
+      const result = await this.service.activateAccount(token as string);
+      res.status(200).json(result);
     } catch (error) {
       next(error);
     }
