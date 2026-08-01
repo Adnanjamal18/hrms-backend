@@ -18,6 +18,9 @@ import roleRoutes from "./features/role/role.routes.js";
 import employeeRoutes from "./features/employee/employee.route.js";
 import userroutes from "./features/user/userroutes.js"
 import employmentTypeRoutes from "./features/employment-type/employment-type.routes.js";
+import holidayRoutes from "./features/holiday/holiday.routes.js";
+import reportRoutes from "./features/report/report.routes.js";
+
 
 dotenv.config();
 connectDB();
@@ -39,6 +42,8 @@ app.use("/api/leave-types", leaveTypeRoutes);
 app.use("/api/leaves", leaveRoutes);
 app.use("/api/roles", roleRoutes);
 app.use("/api/employment-types", employmentTypeRoutes);
+app.use("/api/holidays", holidayRoutes);
+app.use("/api/reports", reportRoutes);
 
 app.use("/departments", departmentRoutes);
 app.use("/employees", employeeRoutes);

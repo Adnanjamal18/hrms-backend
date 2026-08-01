@@ -5,7 +5,7 @@ import { fromNodeHeaders } from "better-auth/node";
 
 export const requireAdmin = async (req:Request,res:Response)=>{
   const  session =await auth.api.getSession ({headers:fromNodeHeaders(req.headers)})
-  if(!session){
+  console.log('Session:', session); if(!session){
     res.status(401).json({message:"unauthorized"});
     return null
   }

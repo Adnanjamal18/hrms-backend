@@ -31,6 +31,8 @@ res.status(500).json({error:"failed to fetch users"})
 
 export const updateauser= async (req:Request,res:Response)=>{
     const session = await requireAdmin(req,res)
+    if(!session) return;
+    
 try{
     const {id} = req.params;
   const updateduser= await prisma.user.update({
