@@ -36,7 +36,7 @@ export const applyLeave = async (req: Request, res: Response, next: NextFunction
     logger.error("Error applying for leave:", error);
     next(error);
   }
-};
+};                  
 
 export const cancelLeave = async (req: Request, res: Response, next: NextFunction) => {
   try {

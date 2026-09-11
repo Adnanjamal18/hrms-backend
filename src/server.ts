@@ -20,7 +20,8 @@ import userroutes from "./features/user/userroutes.js"
 import employmentTypeRoutes from "./features/employment-type/employment-type.routes.js";
 import holidayRoutes from "./features/holiday/holiday.routes.js";
 import reportRoutes from "./features/report/report.routes.js";
-
+import projectRoutes from "./features/Project/projectroutes.js";
+import taskRoutes from "./features/tasks/taskroutes.js";
 
 dotenv.config();
 connectDB();
@@ -44,6 +45,8 @@ app.use("/api/roles", roleRoutes);
 app.use("/api/employment-types", employmentTypeRoutes);
 app.use("/api/holidays", holidayRoutes);
 app.use("/api/reports", reportRoutes);
+app.use("/api/projects", projectRoutes);
+app.use("/api/tasks", taskRoutes);
 
 app.use("/departments", departmentRoutes);
 app.use("/employees", employeeRoutes);

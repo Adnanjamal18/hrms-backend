@@ -7,7 +7,7 @@ import { requireAdmin } from "../../utils/admincheck.js";
 
 export const getallusers = async(req:Request,res:Response,)=>{
     try{
-const users = prisma.user.findMany({
+const users = await prisma.user.findMany({
     select:{
         id:true,
         fullName:true,
@@ -15,7 +15,11 @@ const users = prisma.user.findMany({
         roleId:true,
         createdAt:true,
         leaves:true,
-
+        departments: {
+            select: {
+                departmentId: true
+            }
+        }
     }
 })
 res.json({
