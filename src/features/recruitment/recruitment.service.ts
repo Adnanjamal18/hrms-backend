@@ -1,11 +1,11 @@
 import type { RecruitmentRepository } from "./recruitment.repository.js";
 
 
-export class Recruirmentservice{
+export class Recruitmentservice{
     constructor(private readonly repository: RecruitmentRepository){}
     
-    async createJobPosting(jobData:any){
-        if(jobData.salary)
-    }
+   async createjobposting(jobdata:any){
+    if(jobdata.description.){}
+ }
 
 }
