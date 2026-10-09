@@ -1,5 +1,6 @@
 import { error } from "node:console";
 import type { RecruitmentRepository } from "./recruitment.repository.js";
+import type { JobApplicationStatus } from "@prisma/client";
 
 
 export class Recruitmentservice{
@@ -27,8 +28,8 @@ export class Recruitmentservice{
  }
 
 
-async updateJobPosting(jobdata:any){
-    if(jobdata.id==null){
+async updateJobPosting(id:Number , jobdata:any){
+    if(!id){
         throw new Error("invalid user id")
     }
     if(jobdata.title== null ){
@@ -42,5 +43,50 @@ async updateJobPosting(jobdata:any){
    return newjobupdate
 }
 
-   
+
+async deletejobposting(id:number){
+
+    if(!id){
+      throw new Error("Invalid job ID");
+    }
+  const deletejob =  await this.repository.deletejobposting(id)
+  return deletejob;
+}
+
+async getJobApplicationbyJobId (jobId:number){
+  if(!jobId){
+    throw new Error("Invalid Id")
+  }
+ const candidates= await this.repository.getJobApplicationbyJobId(jobId)
+ return candidates;
+}
+
+async createcadidate (data:any){
+  if(data.email== undefined){
+    throw new Error("email is expected")
+  }
+  if(data.phone== undefined){
+    throw new Error("phone no is expected")
+  }
+  if(data.name== undefined){
+    throw new Error("name is expected")
+  }
+  if(data.jobId== undefined){
+    throw new Error("id is expected.You are not authorized")
+  }
+  const candidate = await this.repository.createcadidate(data) 
+  return candidate
+}
+ 
+async updatecandidatestatus (status:JobApplicationStatus,applicationId:number)
+  {
+    if(applicationId==undefined){
+      throw new Error("you are not authorized")
+    }
+    if(status==undefined){
+      throw new Error("status is not defined ")
+    }
+   const candidate = await this.repository.updatecandidatestatus(status,applicationId)
+   return candidate
+  }
 }

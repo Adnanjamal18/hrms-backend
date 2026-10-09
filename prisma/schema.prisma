@@ -45,8 +45,6 @@ enum LeaveRequestStatus {
   CLOSED
 }
 
-
-
 model User {
   id       String  @id @default(cuid())
   username String  @unique
@@ -83,7 +81,7 @@ model User {
 
   employee Employee?
 
-  attendances Attendance[]
+  attendances      Attendance[]
   joiningChecklist JoiningChecklist?
 
   createdAt DateTime @default(now()) @map("created_at")
@@ -138,29 +136,28 @@ model Verification {
 }
 
 model Designation {
-  id String @id @default(uuid())
-  post String 
-  description String 
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @default(now()) @map("updated_at")
+  id          String   @id @default(uuid())
+  post        String
+  description String
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @default(now()) @map("updated_at")
 }
 
 model Leavetype {
-  id String @id @default(uuid())
-  type String 
-  description String 
-  leaves LeaveManagement[]
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @default(now()) @map("updated_at")
-
+  id          String            @id @default(uuid())
+  type        String
+  description String
+  leaves      LeaveManagement[]
+  createdAt   DateTime          @default(now()) @map("created_at")
+  updatedAt   DateTime          @default(now()) @map("updated_at")
 }
 
 model EmployementType {
-  id String @id @default(uuid())
-  type String 
-  description String 
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @default(now()) @map("updated_at")
+  id          String   @id @default(uuid())
+  type        String
+  description String
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @default(now()) @map("updated_at")
 }
 
 model Role {
@@ -180,11 +177,11 @@ model Role {
 model Department {
   id Int @id @default(autoincrement())
 
-  departmentName String @unique @map("department_name")
-  departmentCode Int @unique @map("department_code")
-  departmentUrl String? @map("department_url")
-  managerId String? @map("manager_id")
-  manager User? @relation("DepartmentManager" , fields:[managerId] , references:[id])
+  departmentName String  @unique @map("department_name")
+  departmentCode Int     @unique @map("department_code")
+  departmentUrl  String? @map("department_url")
+  managerId      String? @map("manager_id")
+  manager        User?   @relation("DepartmentManager", fields: [managerId], references: [id])
 
   users    DepartmentUser[]
   projects Project[]
@@ -203,7 +200,7 @@ model DepartmentUser {
   userId       String @map("user_id")
   departmentId Int    @map("department_id")
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   department Department @relation(fields: [departmentId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now()) @map("created_at")
@@ -313,8 +310,9 @@ model JobApplication {
   phone   String
   address String?
 
-  experience Int?
-  skills     String?
+  experience    Int?
+  skills        String?
+  interviewDate DateTime? @map("interview_date")
 
   currentCompany String? @map("current_company")
   noticePeriod   Int?    @map("notice_period")
@@ -394,16 +392,16 @@ model LeaveManagement {
 
 model Employee {
   id Int @id @default(autoincrement())
-  
-  experience Int?
-  resumeLink String? @map("resume_link")
+
+  experience  Int?
+  resumeLink  String? @map("resume_link")
   linkedinUrl String? @map("linkedin_url")
-  address String?
-  
+  address     String?
+
   accountNumber String? @map("account_number")
-  ifscCode String? @map("ifsc_code")
-  bankName String? @map("bank_name")
-  branch String?
+  ifscCode      String? @map("ifsc_code")
+  bankName      String? @map("bank_name")
+  branch        String?
 
   leaveCount Int @default(0) @map("leave_count")
 
@@ -417,14 +415,14 @@ model Employee {
 }
 
 model Attendance {
-  id        Int      @id @default(autoincrement())
-  userId    String   @map("user_id")
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  date      DateTime @db.Date
-  checkIn   DateTime @map("check_in")
+  id        Int       @id @default(autoincrement())
+  userId    String    @map("user_id")
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  date      DateTime  @db.Date
+  checkIn   DateTime  @map("check_in")
   checkOut  DateTime? @map("check_out")
-  status    String   @default("PRESENT")
-  workHours Float?   @default(0) @map("work_hours")
+  status    String    @default("PRESENT")
+  workHours Float?    @default(0) @map("work_hours")
   notes     String?
 
   createdAt DateTime @default(now()) @map("created_at")
@@ -435,28 +433,29 @@ model Attendance {
 }
 
 model JoiningChecklist {
-  id                  Int      @id @default(autoincrement())
-  userId              String   @unique @map("user_id")
-  user                User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  documentsSubmitted  Boolean  @default(false) @map("documents_submitted")
-  bankDetailsVerified Boolean  @default(false) @map("bank_details_verified")
-  idCardIssued        Boolean  @default(false) @map("id_card_issued")
-  assetAssigned       Boolean  @default(false) @map("asset_assigned")
-  orientationDone     Boolean  @default(false) @map("orientation_done")
-  status              String   @default("PENDING")
+  id                  Int     @id @default(autoincrement())
+  userId              String  @unique @map("user_id")
+  user                User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  documentsSubmitted  Boolean @default(false) @map("documents_submitted")
+  bankDetailsVerified Boolean @default(false) @map("bank_details_verified")
+  idCardIssued        Boolean @default(false) @map("id_card_issued")
+  assetAssigned       Boolean @default(false) @map("asset_assigned")
+  orientationDone     Boolean @default(false) @map("orientation_done")
+  status              String  @default("PENDING")
 
-  createdAt           DateTime @default(now()) @map("created_at")
-  updatedAt           DateTime @updatedAt @map("updated_at")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
   @@map("joining_checklists")
 }
 
 model Holiday {
-  id String @id @default(uuid())
-  name String
-  date DateTime
+  id          String   @id @default(uuid())
+  name        String
+  date        DateTime
   description String?
-  createdAt           DateTime @default(now()) @map("created_at")
-  updatedAt           DateTime @updatedAt @map("updated_at")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
   @@map("holidays")
 }

@@ -31,4 +31,5 @@ export class AttendanceService {
   async getReport(userId?: string) {
     return await this.repository.getAttendanceReport(userId);
   }
+
 }
