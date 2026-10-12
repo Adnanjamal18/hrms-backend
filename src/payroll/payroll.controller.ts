@@ -12,4 +12,7 @@ export class PayrollController {
         data: payroll
       })
     }
+
+   
+
 }
