@@ -13,6 +13,8 @@ export class PayrollController {
       })
     }
 
-   
+   createSalary=async()=>{
+    
+   }
 
 }
