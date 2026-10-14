@@ -13,8 +13,10 @@ export class PayrollController {
       })
     }
 
-   createSalary=async()=>{
-    
+   createSalary=async(req:Request,res:Response,next:NextFunction)=>{
+    const userId= String(req.params)
+    const amount= req.body.amount
+    const salary=this.service.createsalary(userId,amount)
    }
 
 }

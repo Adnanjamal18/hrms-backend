@@ -12,6 +12,22 @@ export class PayrollService{
     const payroll = await this.repository.createpayroll(userId,data)
     return payroll
     }
-
+  async createsalary (userId:string , amount:number){
+     if(userId==undefined){
+        throw new Error("not authorized")
+     }
+     if(amount==undefined){
+        throw new Error("no ammound defined")
+     }
+     const salary = this.repository.createSalary(userId,amount)
+    return salary
+  }
+  async getSalaryById(userId:string){
+   if(userId==undefined){
+    throw new Error ("unauthorized")
+   }
+   const salary = this.repository.getSalaryByUserId(userId)
+   return salary 
+  }
     
 }

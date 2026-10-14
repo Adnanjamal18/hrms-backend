@@ -12,7 +12,7 @@ export class PayrollRepository{
     }
 
     async createSalary (userId:string , amount:number){
-       const salary = this.prisma.salary.create({
+       const salary = await this.prisma.salary.create({
         data:{
             amount:amount,
             user:{connect:{
@@ -21,12 +21,13 @@ export class PayrollRepository{
             
         }
        })
+       return salary
     }
-    async getSalaryByUserId (userId:string , amount:number){
-       const salary = this.prisma.salary.findFirst({
+    async getSalaryByUserId (userId:string ){
+       const salary = await this.prisma.salary.findFirst({
         where:{userId},
         orderBy:{createdAt:"desc"}
        })
+       return salary
     }
-
 }
