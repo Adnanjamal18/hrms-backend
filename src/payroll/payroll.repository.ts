@@ -39,4 +39,18 @@ export class PayrollRepository{
        })
        return salary
     }
+    async createpayslip(payrollId:number){
+        const payslip = this.prisma.payroll.findFirst({
+            where:{id:payrollId},
+            include:{
+                user:{
+                   select:{
+                    email:true,
+                     fullName:true,
+                     mobile:true
+                }
+                }
+            }
+        })
+    }
 }

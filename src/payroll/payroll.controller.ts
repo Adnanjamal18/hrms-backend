@@ -55,5 +55,10 @@ export class PayrollController {
     
    }
 
+  payslip=async(req:Request , res: Response,next:NextFunction)=>{
+  const  payrollId= req.params.id
+  const payslip = this.service
+   
+   }
 
 }

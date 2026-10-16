@@ -42,5 +42,13 @@ export class PayrollService{
 }
    return salary 
   }
+
+  async payslip(payrollId:string){
+  if(payrollId==undefined){
+   throw new Error("invalid id")
+  }
+  const payslip = this.repository.
+  }
+
     
 }
