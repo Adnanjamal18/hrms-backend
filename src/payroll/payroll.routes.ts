@@ -10,6 +10,6 @@ const route = Router();
 route.post("/create-payroll/:id",controller.createpayroll)
 route.post("/create-salary/:id",controller.createSalary)
 route.get("/get-salary/:id",controller.getSalaryById)
-
+route.get("/get-payrolls/:id",controller.getAllPayrollbyId)
 
 export default route;

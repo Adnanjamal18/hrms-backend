@@ -10,6 +10,15 @@ export class PayrollRepository{
    });
    return payroll;
     }
+    
+   async getAllPayrollbyId(userId:string){
+   const  payrolls = await this.prisma.payroll.findMany({
+    where:{userId}
+
+   })
+   return payrolls;
+   }
+
 //! Without await, res.json({ data: salary }) will send Promise { <pending> } to the client.
     async createSalary (userId:string , amount:number){
        const salary = await this.prisma.salary.create({

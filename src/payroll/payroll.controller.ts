@@ -13,6 +13,20 @@ export class PayrollController {
       })
     }
 
+    getAllPayrollbyId= async(req:Request,res:Response,next:NextFunction)=>{
+      const userId = String(req.params.id)
+      try{
+      const payrolls = await this.service.getAllPayrollbyId(userId)
+      res.status(200).json({
+        message:"success",
+        data:payrolls
+      })
+    }catch(error){
+        next(error)
+      }
+    
+    }
+
    createSalary=async(req:Request,res:Response,next:NextFunction)=>{
     const userId= String(req.params.id)
     const amount= req.body.amount
