@@ -56,9 +56,16 @@ export class PayrollController {
    }
 
   payslip=async(req:Request , res: Response,next:NextFunction)=>{
-  const  payrollId= req.params.id
-  const payslip = this.service
-   
+  const  payrollId= Number(req.params.id)
+  try{
+     const payslip = await this.service.payslip(payrollId)
+     res.status(200).json({
+      data:payslip
+     })
+  }catch(error){
+    next(error)
+  }
+ 
    }
 
 }

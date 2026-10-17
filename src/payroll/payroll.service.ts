@@ -32,6 +32,8 @@ export class PayrollService{
      const salary = await this.repository.createSalary(userId,amount)
     return salary
   }
+
+
   async getSalaryById(userId:string){
    if(userId==undefined){
     throw new Error ("unauthorized")
@@ -43,11 +45,15 @@ export class PayrollService{
    return salary 
   }
 
-  async payslip(payrollId:string){
+  async payslip(payrollId:number){
   if(payrollId==undefined){
    throw new Error("invalid id")
   }
-  const payslip = this.repository.
+  const payslip = await this.repository.createpayslip(payrollId)
+  if(!payslip){
+   throw new Error("not found ")
+  }
+  return payslip
   }
 
     
