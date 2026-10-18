@@ -32,7 +32,6 @@ export class RecruitmentRepository {
 //  your code will crash.
 
 // So, JavaScript developers had to invent a crazy "hack" using the spread operator to fake it. This is exactly what we used in your
-//  recruitment.repository.ts file!
 
 // JavaScript / TypeScript - The "Hack":
 

@@ -15,4 +15,6 @@ route.post("/create-candidate",controller.createcadidate)
 route.patch("/update-job/:id", controller.updatejobposting)
 route.delete("/delete-job/:id",controller.deletejobposting)
 route.get("/get-all-candidates/:id",controller.getJobApplicationbyJobId)
+route.put("/update-candidate-status/:id",controller.updatecandidatestatus)
+
 export default route
