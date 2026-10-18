@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { PayrollRepository } from "./payroll.repository.js";
-import { prisma } from "../config/db.js";
+import { prisma } from "../../config/db.js";
 import { PayrollService } from "./payroll.service.js";
 import { PayrollController } from "./payroll.controller.js";
 const repository = new PayrollRepository(prisma)

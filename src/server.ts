@@ -22,7 +22,7 @@ import holidayRoutes from "./features/holiday/holiday.routes.js";
 import reportRoutes from "./features/report/report.routes.js";
 import projectRoutes from "./features/Project/projectroutes.js";
 import taskRoutes from "./features/tasks/taskroutes.js";
-import payrollRoutes from "../src/payroll/payroll.routes.js"
+import payrollRoutes from "./features/payroll/payroll.routes.js"
 import recruitmentRoutes from "../src/features/recruitment/rectuitment.routes.js"
 dotenv.config();
 connectDB();
