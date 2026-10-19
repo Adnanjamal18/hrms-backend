@@ -24,6 +24,7 @@ import projectRoutes from "./features/Project/projectroutes.js";
 import taskRoutes from "./features/tasks/taskroutes.js";
 import payrollRoutes from "./features/payroll/payroll.routes.js"
 import recruitmentRoutes from "../src/features/recruitment/rectuitment.routes.js"
+import selfservice from "../src/features/selfservice/selfservide.routes.js"
 dotenv.config();
 connectDB();
 const app = express();
@@ -56,6 +57,7 @@ app.use("/checklist", checklistRoutes);
 app.use("/user",userroutes)
 app.use("/payroll",payrollRoutes)
 app.use("/recruitment",recruitmentRoutes)
+app.use("/selfservice",selfservice)
 
 app.use(errorhandler)
 

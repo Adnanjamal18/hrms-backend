@@ -15,5 +15,15 @@ export class SelfServiceRepository{
     })
     return updateddata
     }
+
+    async updatepassword(userId:string){
+    const user =await this.prisma.user.findUnique({
+        where:{id:userId},
+    select:{
+        password
+    }
+    }) 
+
+    }
   
 }

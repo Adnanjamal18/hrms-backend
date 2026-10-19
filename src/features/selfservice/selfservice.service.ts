@@ -10,7 +10,7 @@ export class SelfServiceService{
             if(data==undefined){
                 throw new Error("you are not updating anything")
             }
-        const updateddata = this.repository.updateProfile(userId,data)
+        const updateddata =await this.repository.updateProfile(userId,data)
         return updateddata
         }
     }

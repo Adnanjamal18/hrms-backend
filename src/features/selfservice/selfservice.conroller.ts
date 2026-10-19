@@ -7,7 +7,7 @@ export class SelfServiceController{
      const userId=String(req.params.id)
      const data=req.body
      try{
-        const updateddata= this.service.updateProfile(userId,data)
+        const updateddata=await this.service.updateProfile(userId,data)
    res.status(200).json({
     status:"success",
     data:updateddata
