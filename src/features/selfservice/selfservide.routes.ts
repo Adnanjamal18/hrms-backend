@@ -7,5 +7,6 @@ const route=Router()
 const repository= new SelfServiceRepository(prisma)
 const service = new SelfServiceService(repository)
 const controller =new SelfServiceController(service)
-route.patch("/update-profile",controller.updateProfile)
+route.patch("/update-profile/:id",controller.updateProfile)
+route.patch("/update-password/:id",controller.updatepassword)
 export default route

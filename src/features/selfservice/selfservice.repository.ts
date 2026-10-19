@@ -16,14 +16,21 @@ export class SelfServiceRepository{
     return updateddata
     }
 
-    async updatepassword(userId:string){
+    async finduser(userId:string){
     const user =await this.prisma.user.findUnique({
         where:{id:userId},
-    select:{
-        password
-    }
     }) 
-
+   return user
     }
+    async updatepassword(userId:string,hashed:string){
+    const updatedpassword= await this.prisma.user.update({
+        where:{id:userId},
+        data:{password:hashed}
+
+    })
+    return updatedpassword
+    }
+
+
   
 }

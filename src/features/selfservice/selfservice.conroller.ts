@@ -17,4 +17,19 @@ export class SelfServiceController{
      }
    
    }
+
+    updatepassword =async (req:Request,res:Response,next:NextFunction)=>{
+      const userId = String(req.params.id)
+      const newpass = req.body.newpassword
+      const oldpass = req.body.currentpassword
+      try{
+    const updatedpass = await this.service.updatepassword(userId,oldpass,newpass,)
+    res.status(200).json({
+      status:"Success",
+      data:updatedpass
+    })
+      }catch(error){
+        next(error)
+      }
+    }
 }

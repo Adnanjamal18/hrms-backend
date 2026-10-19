@@ -1,5 +1,5 @@
 import type { SelfServiceRepository } from "./selfservice.repository.js";
-
+import bcrypt from "bcrypt"
 export class SelfServiceService{
     constructor (private readonly repository:SelfServiceRepository){}
     
@@ -12,6 +12,29 @@ export class SelfServiceService{
             }
         const updateddata =await this.repository.updateProfile(userId,data)
         return updateddata
+        }
+
+
+        async updatepassword(userId:string,oldpass:string,newpass:string){
+            if(userId==undefined){
+                throw new Error("unauthorized")
+            }
+            if(newpass==undefined){
+                throw new Error("write a valid password")
+            }
+
+
+            const user= await this.repository.finduser(userId)
+            if(!user){
+                throw new Error("User not found")
+            }
+         const isMatch =await  bcrypt.compare(oldpass,user.password!)
+                if(!isMatch){
+                    throw new Error("invalid current password")
+                }
+              const hashed= await bcrypt.hash(newpass,10)
+           return await this.repository.updatepassword(userId,hashed)
+        
         }
     }
 
