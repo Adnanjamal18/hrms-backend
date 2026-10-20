@@ -10,6 +10,7 @@ const repository= new RecruitmentRepository(prisma)
 const service= new Recruitmentservice(repository)
 const controller = new RecruitmentController(service)
 
+route.get("/get-all-jobs", controller.getAllJobs)
 route.post("/create-job",controller.createjobposting)
 route.post("/create-candidate",controller.createcadidate)
 route.patch("/update-job/:id", controller.updatejobposting)

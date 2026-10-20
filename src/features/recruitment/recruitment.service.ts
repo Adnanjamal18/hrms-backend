@@ -5,6 +5,10 @@ import type { JobApplicationStatus } from "@prisma/client";
 
 export class Recruitmentservice{
     constructor(private readonly repository: RecruitmentRepository){}
+    
+    async getAllJobs() {
+        return await this.repository.getAllJobs();
+    }
     //All business Logic (Brain working)
    async createjobposting(jobdata:any){
     if(jobdata.description==null){

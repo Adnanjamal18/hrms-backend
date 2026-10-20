@@ -1,0 +1,100 @@
+import { JobApplicationStatus, PrismaClient } from "@prisma/client";
+export class RecruitmentRepository {
+    prisma;
+    constructor(prisma) {
+        this.prisma = prisma;
+    }
+    async getAllJobs() {
+        return await this.prisma.job.findMany({
+            include: {
+                department: true,
+                applications: true,
+            },
+            orderBy: { createdAt: "desc" }
+        });
+    }
+    async createjobposting(data) {
+        return await this.prisma.job.create({
+            data: {
+                jobTitle: data.title,
+                jobDescription: data.description,
+                departmentId: data.departmentid
+            }
+        });
+    }
+    async updatejobposting(id, data) {
+        return await this.prisma.job.update({
+            where: {
+                id: id
+            },
+            data: {
+                //This syntax ...(condition && { key: value }) is a famous JavaScript trick instead of using if else
+                ...(data.departmentId !== undefined && { departmentId: data.departmentId }),
+                //This syntax ...(condition && { key: value }) is a famous JavaScript trick
+                ...(data.description !== undefined && { jobDescription: data.description }),
+                ...(data.title !== undefined && { jobTitle: data.title })
+                //!
+                // JavaScript DOES NOT have a "Collection If" feature. You cannot write an if statement inside an Array or an Object. If you try,
+                //  your code will crash.
+                // So, JavaScript developers had to invent a crazy "hack" using the spread operator to fake it. This is exactly what we used in your
+                // JavaScript / TypeScript - The "Hack":
+                // const data = {
+                //     jobTitle: "Developer",
+                // We can't use 'if' here. We MUST use the spread operator hack!
+                //     ...(hasDescription === true && { jobDescription: "Coding stuff" })
+                // };
+                // How the JavaScript Hack actually works
+                //! In JavaScript, the && (AND) operator does something called "Short-Circuiting". If the left side of the && is false,
+                //!  JavaScript stops reading immediately and returns false.
+                //! So if hasDescription is false, the code basically turns into this:
+                //! const data = {
+                // !    jobTitle: "Developer",
+                // !    ...(false) 
+                // };
+                //!
+            }
+        });
+    }
+    async deletejobposting(id) {
+        return await this.prisma.job.delete({
+            where: {
+                id
+            }
+        });
+    }
+    async getJobApplicationbyJobId(jobId) {
+        return await this.prisma.jobApplication.findMany({
+            where: {
+                jobId: jobId
+            }
+        });
+    }
+    async createcadidate(data) {
+        return await this.prisma.jobApplication.create({
+            data: {
+                email: data.email,
+                name: data.name,
+                phone: data.phone,
+                address: data.address,
+                ctc: data.ctc,
+                experience: data.experience,
+                skills: data.skills,
+                currentCompany: data.currentCompany,
+                noticePeriod: data.noticePeriod,
+                expectedCtc: data.expectedCtc,
+                resumeLink: data.resumeLink,
+                jobId: data.jobId,
+                status: "APPLIED"
+            }
+        });
+    }
+    async updatecandidatestatus(status, applicationId) {
+        return await this.prisma.jobApplication.update({
+            where: { id: applicationId },
+            data: {
+                status: status
+            }
+        });
+    }
+}
+//# sourceMappingURL=recruitment.repository.js.map

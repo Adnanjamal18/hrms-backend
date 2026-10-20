@@ -2,6 +2,16 @@ import { JobApplicationStatus, PrismaClient } from "@prisma/client";
 export class RecruitmentRepository {
     constructor (private readonly prisma:PrismaClient ){}
 
+    async getAllJobs() {
+        return await this.prisma.job.findMany({
+            include: {
+                department: true,
+                applications: true,
+            },
+            orderBy: { createdAt: "desc" }
+        });
+    }
+
     async createjobposting(data:{
      title: string , description: string , departmentid:number
     }) {

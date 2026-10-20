@@ -3,6 +3,18 @@ import type { Recruitmentservice } from "./recruitment.service.js";
 import type { Request, Response, NextFunction } from "express";
 export class RecruitmentController{
  constructor (private readonly service:Recruitmentservice){}
+
+ getAllJobs = async (_req: Request, res: Response, next: NextFunction) => {
+   try {
+     const jobs = await this.service.getAllJobs();
+     res.status(200).json({
+       message: "Fetched jobs successfully",
+       data: jobs
+     });
+   } catch (error) {
+     next(error);
+   }
+ };
  createjobposting=async(req:Request,res:Response,next:NextFunction)=>{
     try{
       const jobdata =req.body;
